@@ -1,0 +1,309 @@
+{
+  "name": "simplelocalize",
+  "displayName": "SimpleLocalize",
+  "description": "SimpleLocalization Visual Studio Code Extension",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "SimpleLocalize",
+      "properties": {}
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "SimpleLocalizeExtensionContainer",
+          "title": "SimpleLocalize",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "SimpleLocalizeExtensionContainer": [
+        {
+          "type": "tree",
+          "id": "simplelocalize.translationsList",
+          "name": "Translations"
+        },
+        {
+          "type": "tree",
+          "id": "simplelocalize.projectDetails",
+          "name": "Project"
+        },
+        {
+          "type": "tree",
+          "id": "simplelocalize.help",
+          "name": "Help and Feedback"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "simplelocalize.codeAction",
+        "key": "cmd+enter",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "simplelocalize.openInWebUi",
+        "key": "cmd+enter",
+        "when": "focusedView == simplelocalize.translationsList"
+      },
+      {
+        "command": "simplelocalize.editEntry",
+        "key": "cmd+shift+e",
+        "when": "focusedView == simplelocalize.translationsList"
+      },
+      {
+        "command": "simplelocalize.changeNamespace",
+        "key": "cmd+shift+e",
+        "when": "focusedView == simplelocalize.translationsList"
+      },
+      {
+        "command": "simplelocalize.deleteTranslationKey",
+        "key": "cmd+backspace",
+        "when": "focusedView == simplelocalize.translationsList"
+      },
+      {
+        "command": "simplelocalize.copyTranslationKey",
+        "key": "cmd+c",
+        "when": "focusedView == simplelocalize.translationsList"
+      },
+      {
+        "command": "simplelocalize.addTranslationKey",
+        "key": "cmd+shift+n",
+        "when": "focusedView == simplelocalize.translationsList"
+      }
+    ],
+    "menus": {
+      "explorer/context": [],
+      "editor/context": [],
+      "view/title": [
+        {
+          "command": "simplelocalize.addTranslationKey",
+          "when": "view == simplelocalize.translationsList",
+          "group": "navigation@1"
+        },
+        {
+          "command": "simplelocalize.searchTree",
+          "when": "view == simplelocalize.translationsList",
+          "group": "navigation@2"
+        },
+        {
+          "command": "simplelocalize.refreshTree",
+          "when": "view == simplelocalize.translationsList",
+          "group": "navigation@3"
+        },
+        {
+          "command": "simplelocalize.refreshProject",
+          "when": "view == simplelocalize.projectDetails",
+          "group": "navigation@1"
+        },
+        {
+          "command": "simplelocalize.openProject",
+          "when": "view == simplelocalize.projectDetails",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "simplelocalize.editEntry",
+          "when": "view == simplelocalize.translationsList && (viewItem == simplelocalizeTranslationKey || viewItem == simplelocalizeTranslation)",
+          "group": "inline"
+        },
+        {
+          "command": "simplelocalize.openInWebUi",
+          "when": "view == simplelocalize.translationsList && viewItem == simplelocalizeTranslationKey",
+          "group": "context@1"
+        },
+        {
+          "command": "simplelocalize.copyTranslationKey",
+          "when": "view == simplelocalize.translationsList && viewItem == simplelocalizeTranslationKey",
+          "group": "context@2"
+        },
+        {
+          "command": "simplelocalize.editEntry",
+          "when": "view == simplelocalize.translationsList && viewItem == simplelocalizeTranslationKey",
+          "group": "context@3"
+        },
+        {
+          "command": "simplelocalize.changeNamespace",
+          "when": "view == simplelocalize.translationsList && viewItem == simplelocalizeTranslationKey",
+          "group": "context@4"
+        },
+        {
+          "command": "simplelocalize.deleteTranslationKey",
+          "when": "view == simplelocalize.translationsList && viewItem == simplelocalizeTranslationKey",
+          "group": "context@5"
+        },
+        {
+          "command": "simplelocalize.openResource",
+          "when": "view == simplelocalize.projectDetails && viewItem =~ /^resource_/",
+          "group": "inline"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "simplelocalize.openInWebUi",
+        "title": "Open in Web UI",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.copyTranslationKey",
+        "title": "Copy translation key",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "simplelocalize.editEntry",
+        "title": "Change translation key",
+
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "simplelocalize.changeNamespace",
+        "title": "Change namespace",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "simplelocalize.deleteTranslationKey",
+        "title": "Delete translation key",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "simplelocalize.addTranslationKey",
+        "title": "SimpleLocalize: Add translation key",
+        "icon": "$(plus)"
+      },
+      {
+        "command": "simplelocalize.searchTree",
+        "title": "SimpleLocalize: Filter translation keys in Translations View",
+        "icon": "$(search)"
+      },
+      {
+        "command": "simplelocalize.refreshTree",
+        "title": "SimpleLocalize: Refresh translation keys in Translations View",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "simplelocalize.openLink",
+        "title": "Open link",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.configuration",
+        "title": "SimpleLocalize: Configure extension",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "simplelocalize.refreshProject",
+        "title": "SimpleLocalize: Refresh project details in Project View",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "simplelocalize.openProject",
+        "title": "Open project",
+        "icon": "$(home)"
+      },
+      {
+        "command": "simplelocalize.openResource",
+        "title": "Open resource",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.codeAction",
+        "title": "SimpleLocalize: Code Actions",
+        "enablement": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "simplelocalize.welcome",
+        "title": "SimpleLocalize: Welcome page"
+      },
+      {
+        "command": "simplelocalize.cli.download",
+        "title": "SimpleLocalize CLI: Download translations"
+      },
+      {
+        "command": "simplelocalize.cli.upload",
+        "title": "SimpleLocalize CLI: Upload translations"
+      },
+      {
+        "command": "simplelocalize.cli.auto-translate",
+        "title": "SimpleLocalize CLI: Auto-translate"
+      },
+      {
+        "command": "simplelocalize.cli.hosting.publish",
+        "title": "SimpleLocalize CLI: Publish translations to Hosting"
+      },
+      {
+        "command": "simplelocalize.cli.hosting.pull",
+        "title": "SimpleLocalize CLI: Pull translations from Hosting"
+      },
+      {
+        "command": "simplelocalize.web.translations",
+        "title": "SimpleLocalize: Go to Translations",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.web.languages",
+        "title": "SimpleLocalize: Go to Languages",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.web.hosting",
+        "title": "SimpleLocalize: Go to Hosting",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.web.activity",
+        "title": "SimpleLocalize: Go to Activity",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.web.data",
+        "title": "SimpleLocalize: Go to Data",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.web.settings",
+        "title": "SimpleLocalize: Go to Settings",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "simplelocalize.initialConfiguration",
+        "title": "SimpleLocalize: Initial configuration"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.13.0",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "openapi-typescript": "^7.4.3"
+  }
+}
