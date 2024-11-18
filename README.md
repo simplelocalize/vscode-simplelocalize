@@ -2,6 +2,9 @@
 
 [SimpleLocalize](https://simplelocalize.io) VSC Extension is a tool designed to manage translations within your Visual Studio Code environment. With this extension, you can easily integrate SimpleLocalize, a user-friendly app for managing translations, directly into your development workflow. This extension simplifies the localization process, allowing you to focus on writing code while ensuring your application is accessible to a global audience.
 
+
+![SimpleLocalize Visual Studio Code Extension](media/header.png)
+
 ## Features
 
 Here is a short description of all available features:
@@ -23,6 +26,8 @@ Sidebar has 3 sections:
 
 Translations section is a tree of your project content. List of translation keys and translations. You can here edit translation keys and translation.
 
+![Sidebar with translations](videos/sidebar--update-translations.mp4)
+
 Functions:
 
 - **Delete keys** - select one or more translaion keys and click "cmd + backpace" to delete keys,
@@ -33,6 +38,8 @@ Functions:
 
 Project section shows you the basics of your project like number of translation keys, list of languages, namespaces, customers, and [translation hosting](https://simplelocalize.io/translation-hosting/) resources split by environment with option to preview every resource.
 
+![Sidebar with project details](videos/sidebar--project-details.mp4)
+
 #### Help and Feedback
 
 This section provides an option to configure the extension to suit your needs. You can set up your personal token and project details to ensure seamless integration with SimpleLocalize.
@@ -41,16 +48,29 @@ This section provides an option to configure the extension to suit your needs. Y
 
 Extension provides several code actions:
 
-- **Create translation key from selected text**: Create a new translation key from the selected text
-- **Convert selected text into translation key**: Convert the selected text into a translation key
-- **Update translation with seleected text**: Update the translation for the selected text
-- **Rename translation key from selected text**: select the translation key in your code and use "Reanme translation key" to rename it
+- **Create translation key from selected text**
 
-To run one of the code actions, select a text or translation key.
+![create translation key from selected text](videos/code-actions--create-translation-key.mp4)
 
-### Code completition
+- **Convert selected text into translation key**
+
+![create translation key from selected text](videos/code-actions--create-translation-key-from-text.mp4)
+
+
+- **Update translation with seleected text**
+
+![update translation with selected text](videos/code-actions--update-translations.mp4)
+
+- **Rename translation key from selected text**
+
+![rename translation key from selected text](videos/code-actions--rename-translation-key.mp4)
+
+
+### Translation keys completition
 
 Extension suggests translation keys directly in your code. As you type, the extension will provide intelligent suggestions for existing translation keys, making it easier to maintain consistency and avoid typos.
+
+![translation keys completition](videos/code-completition--translation-keys.mp4)
 
 ### Open in Web UI
 
@@ -63,10 +83,14 @@ We've added a several quick actions to get access to some tabs of the configured
 - **Open Data**: Opens the Data tab,
 - **Open Settings**: Opens the Settings tab.
 
+![SimpleLocalize Web UI shortcuts](media/web-ui-actions.png)
+
 ### SimpleLocalize CLI integration
 
 CLI integrations adds the most common commands to your Command Pallete. Commends doesn't run automatically, they opens 
 a prepared command in the SimpleLocalize terminal. Such aproach allows developers to review the command before running it. 
+
+![VS Code Extension for SimpleLocalize CLI integration](videos/cli-integration.mp4)
 
 - **Download translations**
 - **Upload translations**
@@ -74,7 +98,10 @@ a prepared command in the SimpleLocalize terminal. Such aproach allows developer
 - **Hosting: Publish translations**
 - **Hosting: Pull translations**
 
+![VS Code Extension for SimpleLocalize CLI actions](media/cli-actions.png)
+
 > The extension requires to have [SimpleLocalize CLI](https://simplelocalize.io/command-line-tool/) installed on your machine.
+
 
 ## Requirements
 

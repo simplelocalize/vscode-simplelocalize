@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { startInitalConfiguration } from './menuConfiguration';
-import { getProjectToken } from './extension';
+import { getPersonalToken, getProjectToken } from './extension';
 
 export function registerWelcomePage(context: vscode.ExtensionContext) {
 
@@ -46,8 +46,8 @@ export function registerWelcomePage(context: vscode.ExtensionContext) {
         })
     );
 
-    const projectToken = getProjectToken();
-    if (!projectToken) {
+    const personalToken = getPersonalToken();
+    if (!personalToken) {
         vscode.commands.executeCommand('simplelocalize.welcome');
     }
 }
