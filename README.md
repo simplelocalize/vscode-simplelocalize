@@ -109,18 +109,13 @@ We've added a several quick actions to get access to some tabs of the configured
 CLI integrations adds the most common commands to your Command Pallete. Commends doesn't run automatically, they opens 
 a prepared command in the SimpleLocalize terminal. Such aproach allows developers to review the command before running it. 
 
-
-
-https://github.com/user-attachments/assets/177f6a69-4cce-4ca2-91a4-93276cd2ce89
-
-
-
-
 - **Download translations**
 - **Upload translations**
 - **Auto-translate**
 - **Hosting: Publish translations**
 - **Hosting: Pull translations**
+
+https://github.com/user-attachments/assets/177f6a69-4cce-4ca2-91a4-93276cd2ce89
 
 ![VS Code Extension for SimpleLocalize CLI actions](media/cli-actions.png)
 
