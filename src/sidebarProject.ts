@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ProjectAPI } from './api';
-import { getProjectApiKey, onProjectChanged } from './extension';
+import { getProjectApiKey, onContentChanged, onProjectChanged } from './extension';
 import { createMessageEntry } from './utils';
 import { repository } from './repository';
 import { ProjectDetails } from './apiTypes';
@@ -168,7 +168,10 @@ export function registerSidebarProject(context: vscode.ExtensionContext) {
         refresh();
     });
 
-
+    onContentChanged.event(() => {
+        refresh();
+    });
+    
     context.subscriptions.push(treeView);
 }
 

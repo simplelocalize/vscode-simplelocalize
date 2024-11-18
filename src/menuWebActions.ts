@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getProjectToken } from './extension';
 
 
-export async function registerActionsMenu(context: vscode.ExtensionContext) {
+export async function registerWebUiActionsMenu(context: vscode.ExtensionContext) {
 
     function validateConfiguration() {
         if (!getProjectToken()) {

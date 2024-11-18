@@ -1,4 +1,4 @@
-# SimpleLocalize VSC Extension
+# SimpleLocalize VS Code Extension
 
 [SimpleLocalize](https://simplelocalize.io) VSC Extension is a tool designed to manage translations within your Visual Studio Code environment. With this extension, you can easily integrate SimpleLocalize, a user-friendly app for managing translations, directly into your development workflow. This extension simplifies the localization process, allowing you to focus on writing code while ensuring your application is accessible to a global audience.
 
@@ -106,8 +106,7 @@ We've added a several quick actions to get access to some tabs of the configured
 
 ### SimpleLocalize CLI integration
 
-CLI integrations adds the most common commands to your Command Pallete. Commends doesn't run automatically, they opens 
-a prepared command in the SimpleLocalize terminal. Such aproach allows developers to review the command before running it. 
+CLI integration adds the most common commands to your Command Palette. Commends don’t run automatically, they open a prepared command in the SimpleLocalize terminal. Such an approach allows developers to review the command before running it.
 
 - **Download translations**
 - **Upload translations**
@@ -128,9 +127,9 @@ Integrations doesn't require any additional software to work, however some featu
 and auto-translation requires [SimpleLocalize CLI](https://simplelocalize.io/command-line-tool/) to work. It's recommended
 to have the CLI installed to use the full potential of the extension and simplify the whole process of managing your traslation files and strings.
 
-## Extension Ccnfiguration
+## Extension configuration
 
-Open "SimpleLocalize" sidebar from on the left side, go to "Help & Feedback" and click "Configure extension". 
+Open "SimpleLocalize" sidebar on the left side, go to "Help & Feedback" and click "Configure extension". 
 [Generate a personal token](https://simplelocalize.io/dashboard/security/) in SimpleLocalize, and choose option to configure the token, later choose a project. Now, your extension is ready to use.
 
 ## Contribution

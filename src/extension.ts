@@ -8,6 +8,7 @@ import { registerSidebarHelp } from './sidebarHelp';
 import { registerSidebarProject } from './sidebarProject';
 import { registerSidebarTranslations as registerTranslationsList } from './sidebarTranslations';
 import { registerWelcomePage } from './welcomePage';
+import { registerWebUiActionsMenu } from './menuWebActions';
 let globalContext: vscode.ExtensionContext;
 
 export const onProjectChanged = new vscode.EventEmitter<void>();
@@ -20,6 +21,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	registerCodeCompletition(context);
 	registerCodeActions(context);
 	registerActionsMenu(context);
+	registerWebUiActionsMenu(context);
 	registerTranslationsList(context);
 	registerSidebarProject(context);
 	registerSidebarHelp(context);
