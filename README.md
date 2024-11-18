@@ -1,6 +1,6 @@
 # SimpleLocalize VSC Extension
 
-SimpleLocalize VSC Extension is a tool designed to manage translations within your Visual Studio Code environment. With this extension, you can easily integrate SimpleLocalize, a user-friendly app for managing translations, directly into your development workflow. This extension simplifies the localization process, allowing you to focus on writing code while ensuring your application is accessible to a global audience.
+[SimpleLocalize](https://simplelocalize.io) VSC Extension is a tool designed to manage translations within your Visual Studio Code environment. With this extension, you can easily integrate SimpleLocalize, a user-friendly app for managing translations, directly into your development workflow. This extension simplifies the localization process, allowing you to focus on writing code while ensuring your application is accessible to a global audience.
 
 ## Features
 
@@ -99,7 +99,7 @@ We appreciate your help in making this extension better!
 
 ## License
 
-This extension is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This extension is licensed under the MIT License.
 
 ## Release Notes
 

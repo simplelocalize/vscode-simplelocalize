@@ -157,7 +157,7 @@ async function renameTranslationKeyAction(selectedText: string) {
 	let hasNamespaces = isProjectWithNamespaces();
 	let namespace = matchingTranslationKeys?.[0]?.namespace || "";
 
-	const isSameTranslationKeyInDifferentNamespaces = matchingTranslationKeys.length > 1;
+	const isSameTranslationKeyInDifferentNamespaces = matchingTranslationKeys.length > 1 || hasNamespaces;
 	const maxSteps = isSameTranslationKeyInDifferentNamespaces ? 3 : 2;
 
 	if (isSameTranslationKeyInDifferentNamespaces) {

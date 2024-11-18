@@ -24,9 +24,9 @@ export function registerSidebarHelp(context: vscode.ExtensionContext) {
     const entries: LinkEntry[] = [
         createKeyEntry('Welcome page', 'home', 'welcome-page'),
         createKeyEntry('Configure extension', 'gear', 'configure-extension'),
-        createKeyEntry('GitHub repository', 'mark-github', 'https://github.com/simplelocalize/vscode-extension'),
-        createKeyEntry('Report issue', 'bug', 'https://github.com/simplelocalize/vscode-extension/issues'),
-        createKeyEntry('Feature requests', 'lightbulb', 'https://github.com/simplelocalize/vscode-extension/issues'),
+        createKeyEntry('GitHub repository', 'mark-github', 'https://github.com/simplelocalize/vscode-simplelocalize-extension'),
+        createKeyEntry('Report issue', 'bug', 'https://github.com/simplelocalize/vscode-simplelocalize-extension/issues'),
+        createKeyEntry('Feature requests', 'lightbulb', 'https://github.com/simplelocalize/vscode-simplelocalize-extension/issues'),
         createKeyEntry('Join Discord', 'comment-discussion', 'https://discord.gg/wpm5PTCxxG'),
         createKeyEntry('Integrations', 'plug', 'https://simplelocalize.io/integrations/'),
         createKeyEntry('Swagger UI', 'code', 'https://api.simplelocalize.io/openapi/swagger-ui/index.html'),

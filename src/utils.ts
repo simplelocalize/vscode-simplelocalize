@@ -60,14 +60,17 @@ interface NamespaceQuickPickItem extends vscode.QuickPickItem {
 
 export const createQuickPickNamespacesItems = (): NamespaceQuickPickItem[] => {
     const project = repository.findProjectDetails();
-    const namespaces = project?.namespaces || [];
+    const namespaceNames = (project?.namespaces || [])?.map(entry => entry.name) || [];
     const translationKeys = repository.findAllTranslationKeys();
-    return namespaces.map(entry => {
-        const countTranslationKeys = translationKeys.filter(translationKey => translationKey.namespace === entry).length;
-        return ({
-            label: entry.name || "No namespace",
-            value: entry?.name || "",
-            detail: `${countTranslationKeys} translation keys`
+    const namespaceOptions = ["", ...namespaceNames];
+    const uniqueNamespaceOptions = Array.from(new Set(namespaceOptions));
+    return uniqueNamespaceOptions
+        .map(namespaceName => {
+            const countTranslationKeys = translationKeys.filter(translationKey => translationKey.namespace === namespaceName).length;
+            return ({
+                label: namespaceName || "No namespace",
+                value: namespaceName || "",
+                detail: `${countTranslationKeys} translation keys`
+            });
         });
-    });
 };

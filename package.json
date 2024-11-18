@@ -1,16 +1,45 @@
 {
   "name": "simplelocalize",
-  "displayName": "SimpleLocalize",
-  "description": "SimpleLocalization Visual Studio Code Extension",
-  "version": "0.0.1",
+  "displayName": "SimpleLocalize Extension",
+  "publisher": "SimpleLocalize",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simplelocalize/vscode-simplelocalize-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/simplelocalize/vscode-simplelocalize-extension/issues"
+  },
+  "description": "Official SimpleLocalize extension for Visual Studio Code to manage translations in your projects.",
+  "license": "MIT",
+  "homepage": "https://simplelocalize.io",
+  "icon": "media/logo.png",
+  "keywords": [
+    "simplelocalize",
+    "i18n",
+    "l10n",
+    "translation",
+    "translate",
+    "intl",
+    "localization",
+    "internationalization",
+    "multi-language",
+    "next-i18next",
+    "vue-i18n",
+    "react-intl",
+    "i18next",
+    "formatjs",
+    "arb"
+  ],
+  "version": "1.0.5",
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -165,7 +194,6 @@
       {
         "command": "simplelocalize.editEntry",
         "title": "Change translation key",
-
         "icon": "$(pencil)"
       },
       {
