@@ -26,7 +26,8 @@ Sidebar has 3 sections:
 
 Translations section is a tree of your project content. List of translation keys and translations. You can here edit translation keys and translation.
 
-![Sidebar with translations](videos/sidebar--update-translations.mp4)
+
+https://github.com/user-attachments/assets/d4f9b9d0-9f27-4532-897c-10cf9d721c80
 
 Functions:
 
@@ -38,7 +39,7 @@ Functions:
 
 Project section shows you the basics of your project like number of translation keys, list of languages, namespaces, customers, and [translation hosting](https://simplelocalize.io/translation-hosting/) resources split by environment with option to preview every resource.
 
-![Sidebar with project details](videos/sidebar--project-details.mp4)
+https://github.com/user-attachments/assets/63587d63-9116-4b01-9d42-5baae7088d37
 
 #### Help and Feedback
 
@@ -50,27 +51,45 @@ Extension provides several code actions:
 
 - **Create translation key from selected text**
 
-![create translation key from selected text](videos/code-actions--create-translation-key.mp4)
+
+
+https://github.com/user-attachments/assets/4a0a831e-68fc-4b3a-9e7c-abf97074ccf1
+
+
 
 - **Convert selected text into translation key**
 
-![create translation key from selected text](videos/code-actions--create-translation-key-from-text.mp4)
+
+
+https://github.com/user-attachments/assets/d69a9e62-c63f-4f7f-8896-29fce713687e
+
+
 
 
 - **Update translation with seleected text**
 
-![update translation with selected text](videos/code-actions--update-translations.mp4)
+
+
+https://github.com/user-attachments/assets/5998ac72-8f75-416b-97b2-b0c64a7f723f
+
+
 
 - **Rename translation key from selected text**
 
-![rename translation key from selected text](videos/code-actions--rename-translation-key.mp4)
+
+https://github.com/user-attachments/assets/523da146-0748-4c1b-9c64-71b50ac1f971
+
 
 
 ### Translation keys completition
 
 Extension suggests translation keys directly in your code. As you type, the extension will provide intelligent suggestions for existing translation keys, making it easier to maintain consistency and avoid typos.
 
-![translation keys completition](videos/code-completition--translation-keys.mp4)
+
+
+https://github.com/user-attachments/assets/ed9640af-2631-461d-9798-6e3ecb43c9dc
+
+
 
 ### Open in Web UI
 
@@ -90,7 +109,12 @@ We've added a several quick actions to get access to some tabs of the configured
 CLI integrations adds the most common commands to your Command Pallete. Commends doesn't run automatically, they opens 
 a prepared command in the SimpleLocalize terminal. Such aproach allows developers to review the command before running it. 
 
-![VS Code Extension for SimpleLocalize CLI integration](videos/cli-integration.mp4)
+
+
+https://github.com/user-attachments/assets/177f6a69-4cce-4ca2-91a4-93276cd2ce89
+
+
+
 
 - **Download translations**
 - **Upload translations**
@@ -132,7 +156,7 @@ This extension is licensed under the MIT License.
 
 Users appreciate release notes as you update your extension.
 
-### 1.0.0
+### 1.0.X
 
 Initial release of SimpleLocalize VSC Extension
 
