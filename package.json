@@ -4,10 +4,10 @@
   "publisher": "SimpleLocalize",
   "repository": {
     "type": "git",
-    "url": "https://github.com/simplelocalize/vscode-simplelocalize-extension.git"
+    "url": "https://github.com/simplelocalize/vscode-simplelocalize.git"
   },
   "bugs": {
-    "url": "https://github.com/simplelocalize/vscode-simplelocalize-extension/issues"
+    "url": "https://github.com/simplelocalize/vscode-simplelocalize/issues"
   },
   "description": "Official SimpleLocalize extension for Visual Studio Code to manage translations in your projects.",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "formatjs",
     "arb"
   ],
-  "version": "1.0.7",
+  "version": "1.0.9",
   "engines": {
     "vscode": "^1.95.0"
   },

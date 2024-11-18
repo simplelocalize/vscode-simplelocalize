@@ -14,7 +14,6 @@ export function registerWelcomePage(context: vscode.ExtensionContext) {
                 : undefined;
 
             if (currentPanel) {
-                // If we already have a panel, show it in the target column
                 currentPanel.reveal(columnToShowIn);
             } else {
                 currentPanel = vscode.window.createWebviewPanel(
@@ -28,7 +27,15 @@ export function registerWelcomePage(context: vscode.ExtensionContext) {
                 const logoMediaPath = isDarkMode ? 'icon--light.svg' : 'icon.svg';
                 const logoOnDiskPath = vscode.Uri.joinPath(context.extensionUri, 'media', logoMediaPath);
                 const logo = currentPanel.webview.asWebviewUri(logoOnDiskPath);
-                currentPanel.webview.html = getWebviewContent(logo);
+
+                const headerPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'header.png');
+                const header = currentPanel.webview.asWebviewUri(headerPath);
+
+                const helpPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'help.png');
+                const help = currentPanel.webview.asWebviewUri(helpPath);
+
+                currentPanel.webview.html = getWebviewContent(logo, header, help);
+
                 currentPanel.webview.onDidReceiveMessage(async message => {
                     if (message.command === 'configure') {
                         await startInitalConfiguration(context);
@@ -51,8 +58,10 @@ export function registerWelcomePage(context: vscode.ExtensionContext) {
         vscode.commands.executeCommand('simplelocalize.welcome');
     }
 }
+function getWebviewContent(logo: vscode.Uri, header: vscode.Uri, help: vscode.Uri) {
+    const isDarkMode = vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark;
+    const logoMediaPath = isDarkMode ? 'icon--light.svg' : 'icon.svg';
 
-function getWebviewContent(logo: vscode.Uri): string {
     return `
         <!DOCTYPE html>
         <html lang="en">
@@ -62,20 +71,42 @@ function getWebviewContent(logo: vscode.Uri): string {
             <title>SimpleLocalize Welcome Page</title>
         </head>
         <body>
-            <img src=${logo} alt="SimpleLocalize Logo" style="margin-top: 20px;" height="50" />
-            <h1>SimpleLocalize Extension</h1>
-            <p>Welcome to SimpleLocalize Extension for Visual Studio Code.</p>
-            <h2>Configuration</h2>
+            <img src="${logo}" alt="SimpleLocalize Logo" style="margin-top: 20px;" height="50" />
+            <h1>
+            SimpleLocalize: Welcome page
+            </h1>
             <p>
-                The extension requires a personal token and a project token to work.<br/>
-                To start, you need to <a href="https://simplelocalize.io/dashboard/security/?source=vsc-extension">generate a personal token</a> and <a href="#" id="configure">run the initial setup</a>.
+            Welcome to SimpleLocalize Extension for Visual Studio Code!<br/>
+            SimpleLocalize is an app that helps you to manage your translations in a more efficient way.<br/>
+            To start, you will need to:
+            <br/>
+            <br/>
+            1. <a href="https://simplelocalize.io">Sign up</a> or <a href="https://simplelocalize.io/dashboard">sign in</a> to SimpleLocalize
+            <br/><br/>
+            2. <a href="https://simplelocalize.io/dashboard/security/">Get your personal token</a> from your profile page
+            <br/><br/>
+            3. <a href="#" id="configure">Configure extension</a> with your personal token and choose a project for your workspace
+
             </p>
-            <h2>Sidebars</h2>
-            <p>The extension provides a sidebar with a list of translations and a project details view.</p>
-            <h2>Actions</h2>
+
+            <img 
+            src=${header} 
+            alt="header" 
+            style="object-fit: contain;" 
+            height="400"
+             />
+
+           
+            <h2>Need help?</h2>
             <p>
-                The extension provides a set of actions including those that interact with the <a href="https://simplelocalize.io/docs/cli/get-started/">SimpleLocalize CLI</a>.
+            If you need help, you can visit our extension <a href="https://github.com/simplelocalize/vscode-simplelocalize">GitHub repository</a> page or <a href="https://simplelocalize.io/docs/general/support/">contact us directly</a>.
+            <br/>You will find more useful links in the "Help and Feedback" section.
             </p>
+
+            <img src=${help} alt="help" 
+            style="object-fit: contain;"
+            height="400" />
+
             <script>
                 const vscode = acquireVsCodeApi();
                 const configureLink = document.getElementById('configure');

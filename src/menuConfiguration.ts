@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { PersonalAPI, ProjectAPI } from './api';
 import { clearAll, getPersonalToken, getProjectApiKey, updatePersonalToken, updateProject } from './extension';
+import { repository } from './repository';
 
 interface ProjectQuickPickItem extends vscode.QuickPickItem {
     projectToken: string;
@@ -99,18 +100,25 @@ async function resetConfiguration(context: vscode.ExtensionContext) {
 }
 
 export async function startInitalConfiguration(context: vscode.ExtensionContext) {
-    await clearAll();
+
     const personalToken = await getPersonalToken();
+
     if (!personalToken) {
+        await clearAll();
         await requestPersonalTokenConfiguration();
-    }
+    } else {
+        const reinitializeLabel = 'Start initial configuration';
+        const userResponse = await vscode.window.showWarningMessage(
+            'You already have a personal token configured. Do you want to restart the initial configuration?',
+            { modal: true },
+            reinitializeLabel
+        );
 
-    const projectToken = getProjectApiKey();
-    if (!projectToken) {
-        await requestProjectConfiguration();
+        if (userResponse === reinitializeLabel) {
+            await clearAll();
+            await requestPersonalTokenConfiguration();
+        }
     }
-
-    await initializeProject(context);
 }
 
 export async function registerConfigurationMenu(context: vscode.ExtensionContext) {
@@ -159,7 +167,13 @@ export async function initializeProject(context: vscode.ExtensionContext) {
     }
 
     const personalApi = new PersonalAPI(personalToken);
-    const projects = await personalApi.getProjects();
+    let projects = [];
+    try {
+        projects = await personalApi.getProjects();
+    } catch (error) {
+        vscode.window.showErrorMessage('Invalid or expired personal token.');
+        return;
+    }
 
     if (projects.length === 0) {
         return;
@@ -182,6 +196,7 @@ export async function initializeProject(context: vscode.ExtensionContext) {
         vscode.window.showErrorMessage('Failed to fetch project details.');
         return;
     }
+    repository.storeProjectDetails(projectDetails);
 
     vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,
