@@ -3,7 +3,7 @@ import { ProjectAPI } from './api';
 import { ProjectDetails } from './apiTypes';
 import { getProjectApiKey, getProjectToken, onContentChanged, onProjectChanged } from './extension';
 import { repository } from './repository';
-import { createMessageEntry, createQuickPickNamespacesItems, isProjectWithNamespaces } from './utils';
+import { createMessageEntry, createQuickPickLanguageItems, createQuickPickNamespacesItems, isProjectWithNamespaces } from './utils';
 
 export function registerSidebarTranslations(context: vscode.ExtensionContext) {
     let recordsFiltered: SimpleLocalizeTranslationKeyItem[] = [];
@@ -165,11 +165,14 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         }
 
         let namespace = "";
+        let maxSteps = 3;
+        let currentStep = 1;
         const hasNamespaces = isProjectWithNamespaces();
         if (hasNamespaces) {
+            maxSteps = 4;
             const namespaceOptions = createQuickPickNamespacesItems();
             const selectedNamespace = await vscode.window.showQuickPick(namespaceOptions, {
-                title: "Add new translation key (1/2)",
+                title: `Add new translation key (${currentStep++}/${maxSteps})`,
                 placeHolder: "Choose namespace",
             });
             namespace = selectedNamespace?.value || "";
@@ -178,10 +181,12 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         const localTranslationKeys = repository.findAllTranslationKeys();
         const localTranslationKeysByNamespace = localTranslationKeys.filter(item => item.namespace === namespace);
 
+
+
         const translationKey = await vscode.window.showInputBox({
             value: inputText || "",
             placeHolder: "Enter translation key",
-            title: hasNamespaces ? "Add new translation key (2/2)" : "Add new translation key",
+            title: `Add new translation key (${currentStep++}/${maxSteps})`,
             validateInput: (value) => {
                 if (!value) {
                     return "Key is required";
@@ -198,10 +203,33 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
             }
         });
 
-        if (translationKey) {
-            await projectApi.addTranslationKey(translationKey, namespace);
-            onContentChanged.fire();
+
+        if (!translationKey) {
+            return;
         }
+
+        await projectApi.addTranslationKey(translationKey, namespace);
+        onContentChanged.fire();
+        vscode.window.showInformationMessage(`Translation key "${translationKey}" added.`);
+
+        const languageQuickPickOptions = createQuickPickLanguageItems();
+        const selectedLanguage = await vscode.window.showQuickPick(languageQuickPickOptions, {
+            title: `Choose language for translation (${currentStep++}/${maxSteps})`,
+            placeHolder: "Choose language"
+        });
+
+        if (!selectedLanguage) {
+            return;
+        }
+
+        const translation = await vscode.window.showInputBox({
+            value: "",
+            placeHolder: "Enter translation",
+            title: `Add translation (${currentStep}/${maxSteps})`,
+        });
+
+        await projectApi.updateTranslation(translationKey, namespace, selectedLanguage.key, translation);
+        onContentChanged.fire();
     });
 
     vscode.commands.registerCommand('simplelocalize.copyTranslationKey', async (active: SimpleLocalizeTranslationKeyItem) => {

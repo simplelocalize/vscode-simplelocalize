@@ -183,13 +183,22 @@ async function renameTranslationKeyAction(selectedText: string) {
 		return;
 	}
 
-	const newNamespace = await vscode.window.showQuickPick(createQuickPickNamespacesItems(), {
-		title: hasNamespaces ? `Step 3/${maxSteps}: Choose new namespace` : undefined,
-		placeHolder: "Choose namespace"
-	});
+
+	let newNamespace: string = "";
+	if (hasNamespaces) {
+		const userNamespace = await vscode.window.showQuickPick(createQuickPickNamespacesItems(), {
+			title: hasNamespaces ? `Step 3/${maxSteps}: Choose new namespace` : undefined,
+			placeHolder: "Choose namespace"
+		});
+		if (userNamespace) {
+			newNamespace = userNamespace?.value || "";
+		} else {
+			return;
+		}
+	}
 
 	const projectApi = new ProjectAPI(apiKey);
-	await projectApi.updateTranslationKey(selectedText, namespace, newTranslationKey, newNamespace?.value);
+	await projectApi.updateTranslationKey(selectedText, namespace, newTranslationKey, newNamespace);
 	onContentChanged.fire();
 
 	editor.edit(editBuilder => {
