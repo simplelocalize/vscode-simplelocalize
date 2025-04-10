@@ -4,7 +4,6 @@ import { getProjectApiKey, onContentChanged, onProjectChanged } from './extensio
 import { createMessageEntry } from './utils';
 import { repository } from './repository';
 import { ProjectDetails } from './apiTypes';
-import { c } from 'openapi-typescript/dist/index.js';
 
 enum ProjectEntryType {
     PROJECT_NAME = 'project-name',
@@ -41,9 +40,11 @@ export function registerSidebarProject(context: vscode.ExtensionContext) {
             return languages.map((language: any) => {
                 const item = new vscode.TreeItem(language.name, vscode.TreeItemCollapsibleState.None);
                 item.description = language.key;
-                item.languageKey = language.key;
                 item.contextValue = ProjectEntryType.LANGUAGE + language.key;
-                return item;
+                return {
+                    languageKey: language.key,
+                    ...item
+                };
             });
         }
 
@@ -329,5 +330,6 @@ export function registerSidebarProject(context: vscode.ExtensionContext) {
 }
 
 interface ProjectEntry extends vscode.TreeItem {
+    languageKey?: string;
     path?: string;
 }

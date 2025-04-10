@@ -27,9 +27,9 @@ interface SimpleLocalizeTranslationKeyItem extends vscode.TreeItem {
 }
 
 interface SimpleLocalizeOptionsItem extends vscode.TreeItem {
-    keyNamespace: KeyNamespace;
-    type: TreeKeyType;
+    keyNamespace?: KeyNamespace;
     keyDetails?: any;
+    type?: TreeKeyType;
 }
 
 interface SimpleLocalizeTranslationItem extends vscode.TreeItem {
@@ -95,8 +95,11 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
                     const descriptionItem = new vscode.TreeItem(description, vscode.TreeItemCollapsibleState.None);
                     descriptionItem.iconPath = new vscode.ThemeIcon('note');
                     descriptionItem.tooltip = description;
-                    descriptionItem.type = TreeKeyType.ViewDescription;
-                    element.children.push(descriptionItem);
+                    element.children.push({
+                        keyNamespace,
+                        type: TreeKeyType.ViewDescription,
+                        ...descriptionItem,
+                    });
                 }
                 return Promise.resolve(element?.children ?? []);
             }
@@ -346,7 +349,8 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         if (item || isSingleElement) {
 
             if (item.type === TreeKeyType.ViewDescription) {
-                await vscode.env.clipboard.writeText(item?.description || "");
+                const itemDescription = item?.description as string;
+                await vscode.env.clipboard.writeText(itemDescription ?? "");
                 vscode.window.showInformationMessage(`Copied description to clipboard.`);
                 return;
             }

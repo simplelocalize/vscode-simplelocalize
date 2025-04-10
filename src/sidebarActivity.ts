@@ -6,7 +6,6 @@ import { repository } from './repository';
 import { ProjectActivity, ProjectDetails } from './apiTypes';
 import { DateTime } from 'luxon';
 
-
 export function registerSidebarActivity(context: vscode.ExtensionContext) {
 
     const onDidChangeTreeData: vscode.EventEmitter<ProjectEntry | undefined | void> = new vscode.EventEmitter<ProjectEntry | undefined | void>();
@@ -63,7 +62,7 @@ export function registerSidebarActivity(context: vscode.ExtensionContext) {
     const mapActivityToEntry = (entry: ProjectActivity): vscode.TreeItem | null => {
         const activityType = entry?.type ?? "unknown";
         const item = new vscode.TreeItem(activityType, vscode.TreeItemCollapsibleState.None);
-        item.description = formatAsRelative(entry?.createdAt!);
+        item.description = formatAsRelative(entry?.createdAt!) ?? "";
         switch (activityType) {
             case "IMPORT":
                 item.label = "Import";
