@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { ProjectDetails, ProjectDetailsItem } from './apiTypes';
+import { AutoTranslateJob, KeyNamespace, ProjectActivity, ProjectDetails, ProjectDetailsItem } from './apiTypes';
 
 const API_BASE_URL = 'https://api.simplelocalize.io/api';
 const CLIENT_NAME = 'vsc-extension';
@@ -31,40 +31,10 @@ class ProjectAPI {
         }
     }
 
-    async getAllTranslationKeys() {
+    async getAllTranslationKeys(): Promise<KeyNamespace[]> {
         try {
-            let page = 0;
-            let hasNext = true;
-            const size = 2000;
-            let output = [];
-            while (hasNext) {
-                const response = await this.api.get('/v1/translation-keys', {
-                    params: {
-                        size,
-                        page,
-                    },
-                });
-                const responseKeys = response?.data?.data || [];
-                output.push(...responseKeys);
-                hasNext = response?.data?.hasNext || false;
-                page++;
-            }
-            return output;
-        } catch (error) {
-            console.error('Error fetching translations:', error);
-            throw error;
-        }
-    }
-
-    async getTranslationKeys(page: number = 0, size: number = 100) {
-        try {
-            const response = await this.api.get('/v1/translation-keys', {
-                params: {
-                    size,
-                    page,
-                },
-            });
-            return response?.data?.data;
+            const response = await this.api.get('/v1/translation-keys/list');
+            return response?.data?.data || [];
         } catch (error) {
             console.error('Error fetching translations:', error);
             throw error;
@@ -99,10 +69,15 @@ class ProjectAPI {
     }
 
     // Fetch a specific translation key
-    async getTranslationKey(key: string) {
+    async getTranslationKeyDetails(key: string, namespace: string = "") {
         try {
-            const response = await this.api.get(`/v1/translations/${key}`);
-            return response.data;
+            const response = await this.api.get(`/v1/translation-keys/details`, {
+                params: {
+                    key,
+                    namespace
+                }
+            });
+            return response?.data?.data || {};
         } catch (error) {
             console.error(`Error fetching translation key ${key}:`, error);
             throw error;
@@ -182,6 +157,57 @@ class ProjectAPI {
             return response.data;
         } catch (error) {
             console.error(`Error deleting translation key ${key}:`, error);
+            throw error;
+        }
+    }
+
+    async fetchActivity(): Promise<ProjectActivity[]> {
+        try {
+            const response = await this.api.get('/v1/activity', {
+                params: {
+                    page: 0,
+                    size: 10
+                }
+            });
+            return response?.data?.data || [];
+        } catch (error) {
+            console.error('Error fetching activity:', error);
+            throw error;
+        }
+    }
+
+    async startAutoTranslation(languageKeys: string[]) {
+        try {
+            const response = await this.api.post('/v2/jobs/auto-translate', {
+                languageKeys
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error starting auto-translation:', error);
+            throw error;
+        }
+    }
+
+    async fetchRunningJobs(): Promise<AutoTranslateJob[]> {
+        try {
+            const response = await this.api.get('/v2/jobs', {
+                params: {
+                    status: 'RUNNING'
+                }
+            });
+            return response?.data?.data || [];
+        } catch (error) {
+            console.error('Error fetching running jobs:', error);
+            throw error;
+        }
+    }
+
+    async publishTranslations() {
+        try {
+            const environment = `_latest`;
+            await this.api.post(`/v2/environments/${environment}/publish`);
+        } catch (error) {
+            console.error('Error publishing translations:', error);
             throw error;
         }
     }

@@ -4,6 +4,41 @@ import { ProjectDetails } from './apiTypes';
 import { getProjectApiKey, getProjectToken, onContentChanged, onProjectChanged } from './extension';
 import { repository } from './repository';
 import { createMessageEntry, createQuickPickLanguageItems, createQuickPickNamespacesItems, isProjectWithNamespaces } from './utils';
+import { Key } from 'readline';
+
+enum TreeKeyType {
+    TranslationKey = "translation-key",
+    Translation = "translation",
+    ViewTranslations = "translation-group",
+    ViewTags = "tag-group",
+    ViewDescription = "description-group",
+    Tag = "tag"
+}
+
+interface KeyNamespace {
+    key: string;
+    namespace: string;
+}
+
+interface SimpleLocalizeTranslationKeyItem extends vscode.TreeItem {
+    keyNamespace: KeyNamespace;
+    type: TreeKeyType;
+    children?: SimpleLocalizeOptionsItem[];
+}
+
+interface SimpleLocalizeOptionsItem extends vscode.TreeItem {
+    keyNamespace: KeyNamespace;
+    type: TreeKeyType;
+    keyDetails?: any;
+}
+
+interface SimpleLocalizeTranslationItem extends vscode.TreeItem {
+    keyNamespace: KeyNamespace;
+    type: TreeKeyType;
+    languageKey: string;
+    text: string;
+}
+
 
 export function registerSidebarTranslations(context: vscode.ExtensionContext) {
     let recordsFiltered: SimpleLocalizeTranslationKeyItem[] = [];
@@ -30,9 +65,48 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
             return [createMessageEntry('Project not configured')];
         }
 
-        if (element && element.type === "translaiton-key") {
-            element.children = await fetchKeyDetails(element.translationKey, element.namespace);
-            return Promise.resolve(element.children);
+        if (element) {
+            const keyNamespace = element.keyNamespace;
+            if (element.type === TreeKeyType.TranslationKey) {
+                const apiKey = getProjectApiKey();
+                if (!apiKey) {
+                    return [];
+                }
+
+                const projectApi = new ProjectAPI(apiKey);
+                const { key, namespace } = keyNamespace;
+                const translationKeyDetails = await projectApi.getTranslationKeyDetails(key, namespace);
+
+                const charactersLimit = translationKeyDetails?.charactersLimit || 0;
+                const formattedLimit = charactersLimit > 0 ? `max ${charactersLimit} characters` : "";
+                element.children = [
+                    createGroupEntry('Translations', 'quote', formattedLimit, TreeKeyType.ViewTranslations, keyNamespace, translationKeyDetails)
+                ];
+
+                const tags = translationKeyDetails?.tags || [];
+                if (tags.length > 0) {
+                    const formattedTagNumber = tags.length > 0 ? `${tags.length}` : "";
+                    const entry = createGroupEntry('Tags', 'tag', formattedTagNumber, TreeKeyType.ViewTags, keyNamespace, translationKeyDetails)
+                    element.children.push(entry);
+                }
+
+                const description = translationKeyDetails?.description || "";
+                if (description) {
+                    const descriptionItem = new vscode.TreeItem(description, vscode.TreeItemCollapsibleState.None);
+                    descriptionItem.iconPath = new vscode.ThemeIcon('note');
+                    descriptionItem.tooltip = description;
+                    descriptionItem.type = TreeKeyType.ViewDescription;
+                    element.children.push(descriptionItem);
+                }
+                return Promise.resolve(element?.children ?? []);
+            }
+            if (element.type === TreeKeyType.ViewTranslations) {
+                element.children = await createTranslationEntries(keyNamespace);
+                return Promise.resolve(element?.children ?? []);
+            }
+            if (element.type === TreeKeyType.ViewTags) {
+                return Promise.resolve(element?.children ?? []);
+            }
         }
 
         if (recordsFiltered.length === 0) {
@@ -40,12 +114,50 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         }
 
         return Promise.resolve(recordsFiltered.map(item => {
-            item.collapsibleState = expandedItems.get(item.translationKey) ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed;
+            item.collapsibleState = expandedItems.get(item?.keyNamespace?.key) ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed;
             return item;
         }));
     };
 
-    const fetchKeyDetails = async (translationKey: string, namespace: string = ""): Promise<SimpleLocalizeTranslationItem[]> => {
+    const createTranslationEntry = (keyNamespace: KeyNamespace, languageKey: string, translation: string): SimpleLocalizeTranslationItem => {
+        const item = new vscode.TreeItem(languageKey, vscode.TreeItemCollapsibleState.None);
+        item.description = translation;
+        item.contextValue = 'simplelocalizeTranslation';
+        return { keyNamespace, languageKey, text: translation, type: TreeKeyType.Translation, ...item };
+    };
+
+    const createKeyEntry = (keyNamespace: KeyNamespace): SimpleLocalizeTranslationKeyItem => {
+        const item = new vscode.TreeItem(keyNamespace?.key, vscode.TreeItemCollapsibleState.Collapsed);
+        item.contextValue = 'simplelocalizeTranslationKey';
+        item.description = keyNamespace?.namespace || "";
+        return { keyNamespace, type: TreeKeyType.TranslationKey, children: [], ...item };
+    };
+
+    const createGroupEntry = (name: string, icon: string, description: string, type: TreeKeyType, keyNamespace: KeyNamespace, keyDetails: any): any => {
+        const item = new vscode.TreeItem(name, vscode.TreeItemCollapsibleState.Collapsed);
+        item.iconPath = new vscode.ThemeIcon(icon);
+        item.description = description;
+        const tagEntries = createTagEntries(keyNamespace, keyDetails);
+        return { type, children: tagEntries, keyNamespace, keyDetails, ...item };
+    };
+
+    const createTagEntries = (keyNamespace: KeyNamespace, keyDetails: any): SimpleLocalizeOptionsItem[] => {
+        const tags = keyDetails?.tags || [];
+        if (tags.length === 0) {
+            return [createMessageEntry('No tags found')];
+        }
+        return tags.map((tag: { name: string }) => createTagEntry(tag.name, keyNamespace));
+    };
+
+    const createTagEntry = (tag: string, keyNamespace: KeyNamespace): SimpleLocalizeOptionsItem => {
+        const item = new vscode.TreeItem(tag, vscode.TreeItemCollapsibleState.None);
+        item.contextValue = 'simplelocalizeTag';
+        item.iconPath = new vscode.ThemeIcon("tag");
+        return { type: TreeKeyType.Tag, keyNamespace, ...item };
+    };
+
+
+    const createTranslationEntries = async (keyNamespace: KeyNamespace): Promise<SimpleLocalizeTranslationItem[]> => {
 
         const apiKey = getProjectApiKey();
         if (!apiKey) {
@@ -53,12 +165,13 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         }
         const projectApi = new ProjectAPI(apiKey);
 
-        const keyTranslations = await projectApi.getTranslationsForKey(translationKey, namespace);
+        const { key, namespace } = keyNamespace;
+        const keyTranslations = await projectApi.getTranslationsForKey(key, namespace);
         const languageKeys = project?.languages?.map((lang) => lang.key) || [];
         return languageKeys
             .map((languageKey) => {
                 const translation = keyTranslations.find((item: { language: string }) => item.language === languageKey)?.text || "";
-                return createTranslationEntry(translationKey, namespace, languageKey!, translation);
+                return createTranslationEntry(keyNamespace, languageKey!, translation);
             });
 
     };
@@ -89,7 +202,10 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
                 const translationKeysEntities = translationKeys.map(item => ({ translationKey: item.key, namespace: item.namespace }));
                 repository.storeTranslationKeys(translationKeysEntities);
 
-                const recordsMapped = translationKeys.map(item => createKeyEntry(item.key, item.namespace));
+                const recordsMapped = translationKeys.map(item => createKeyEntry({
+                    key: item.key,
+                    namespace: item?.namespace || ""
+                }));
                 records = recordsMapped;
                 recordsFiltered = recordsMapped;
 
@@ -107,26 +223,12 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
 
     const search = (query: string): void => {
         if (query) {
-            recordsFiltered = records.filter(item => item.translationKey.includes(query));
+            recordsFiltered = records.filter(item => item?.keyNamespace?.key.includes(query));
         } else {
             recordsFiltered = records;
         }
         searchQuery = query;
         onDidChangeTreeData.fire();
-    };
-
-    const createTranslationEntry = (translationKey: string, namespace: string, languageKey: string, translation: string): SimpleLocalizeTranslationItem => {
-        const item = new vscode.TreeItem(languageKey, vscode.TreeItemCollapsibleState.None);
-        item.description = translation;
-        item.contextValue = 'simplelocalizeTranslation';
-        return { translationKey, namespace, languageKey, text: translation, type: "translation", ...item };
-    };
-
-    const createKeyEntry = (translationKey: string, namespace: string): SimpleLocalizeTranslationKeyItem => {
-        const item = new vscode.TreeItem(translationKey, vscode.TreeItemCollapsibleState.Collapsed);
-        item.contextValue = 'simplelocalizeTranslationKey';
-        item.description = namespace;
-        return { translationKey, namespace, type: "translaiton-key", children: [], ...item };
     };
 
     const treeDataProvider: vscode.TreeDataProvider<SimpleLocalizeTranslationKeyItem> = {
@@ -242,22 +344,28 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         const selectedItems = treeView.selection;
         const isSingleElement = selectedItems.length === 1;
         if (item || isSingleElement) {
-            await vscode.env.clipboard.writeText(item.translationKey);
-            vscode.window.showInformationMessage(`Copied key "${item.translationKey}" to clipboard.`);
+
+            if (item.type === TreeKeyType.ViewDescription) {
+                await vscode.env.clipboard.writeText(item?.description || "");
+                vscode.window.showInformationMessage(`Copied description to clipboard.`);
+                return;
+            }
+
+            await vscode.env.clipboard.writeText(item?.keyNamespace?.key);
+            vscode.window.showInformationMessage(`Copied key "${item?.keyNamespace?.key}" to clipboard.`);
             return;
         }
 
         if (selectedItems.length > 1) {
             vscode.window.showInformationMessage(`Copied ${selectedItems.length} keys to clipboard.`);
-            const keys = selectedItems.map(item => item.translationKey).join('\n');
+            const keys = selectedItems.map(item => item?.keyNamespace?.key).join('\n');
             await vscode.env.clipboard.writeText(keys);
             return;
         }
     });
 
-
     vscode.commands.registerCommand('simplelocalize.editEntry', async (item: SimpleLocalizeTranslationKeyItem | SimpleLocalizeTranslationItem) => {
-        const isKey = item.type === "translaiton-key";
+        const isKey = item.type === TreeKeyType.TranslationKey;
         const projectApi = getProjectApi();
         if (!projectApi) {
             return;
@@ -266,15 +374,15 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         if (isKey) {
             const newKey = await vscode.window.showInputBox({
                 placeHolder: "Edit translation key",
-                value: item.translationKey
+                value: item?.keyNamespace?.key
             });
-            if (newKey && newKey !== item.translationKey) {
-                await projectApi.updateTranslationKey(item.translationKey, item.namespace, newKey, item.namespace);
+            if (newKey && newKey !== item?.keyNamespace?.key) {
+                await projectApi.updateTranslationKey(item?.keyNamespace?.key, item?.keyNamespace?.namespace, newKey, item?.keyNamespace?.namespace);
                 onContentChanged.fire();
             }
         }
 
-        const isTranslation = item.type === "translation";
+        const isTranslation = item.type === TreeKeyType.Translation;
         if (isTranslation) {
             const translationItem = item as SimpleLocalizeTranslationItem;
             const newTranslation = await vscode.window.showInputBox({
@@ -282,9 +390,25 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
                 value: translationItem.text
             });
             if (newTranslation && newTranslation !== translationItem.text) {
-                await projectApi.updateTranslation(item.translationKey, item.namespace, translationItem.languageKey, newTranslation);
+                await projectApi.updateTranslation(item?.keyNamespace?.key, item?.keyNamespace?.namespace, translationItem.languageKey, newTranslation);
                 onContentChanged.fire();
             }
+        }
+        await vscode.commands.executeCommand('simplelocalize.refreshProject');
+    });
+
+    vscode.commands.registerCommand('simplelocalize.clearTranslation', async (item: SimpleLocalizeTranslationKeyItem | SimpleLocalizeTranslationItem) => {
+        const projectApi = getProjectApi();
+        if (!projectApi) {
+            return;
+        }
+
+        const isTranslation = item.type === TreeKeyType.Translation;
+        if (isTranslation) {
+            console.log("Clearing translation for item", item?.keyNamespace);
+            const translationItem = item as SimpleLocalizeTranslationItem;
+            await projectApi.updateTranslation(item?.keyNamespace?.key, item?.keyNamespace?.namespace, translationItem.languageKey, '');
+            onContentChanged.fire();
         }
     });
 
@@ -301,15 +425,15 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
 
         const newNamespace = await vscode.window.showInputBox({
             placeHolder: "Edit namespace",
-            value: item.namespace
+            value: item?.keyNamespace?.namespace
         });
 
         if (selectedItems.length > 1) {
             for (const item of selectedItems) {
-                await projectApi.updateTranslationKey(item.translationKey, item.namespace, item.translationKey, newNamespace);
+                await projectApi.updateTranslationKey(item?.keyNamespace?.key, item?.keyNamespace?.namespace, item?.keyNamespace?.key, newNamespace);
             }
         } else {
-            await projectApi.updateTranslationKey(item.translationKey, item.namespace, item.translationKey, newNamespace);
+            await projectApi.updateTranslationKey(item?.keyNamespace?.key, item?.keyNamespace?.namespace, item?.keyNamespace?.key, newNamespace);
         }
         onContentChanged.fire();
     });
@@ -333,7 +457,7 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
 
             if (confirm === 'Yes') {
                 for (const item of selectedItems) {
-                    await projectApi.deleteTranslationKey(item.translationKey, item.namespace);
+                    await projectApi.deleteTranslationKey(item?.keyNamespace?.key, item?.keyNamespace?.namespace);
                 }
                 onContentChanged.fire();
             }
@@ -341,16 +465,15 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
         }
 
         const confirm = await vscode.window.showWarningMessage(
-            `Are you sure you want to delete the key "${item.translationKey}"?`,
+            `Are you sure you want to delete the key "${item?.keyNamespace?.key}"?`,
             { modal: true },
             'Yes'
         );
         if (confirm === 'Yes') {
-            await projectApi.deleteTranslationKey(item.translationKey, item.namespace);
+            await projectApi.deleteTranslationKey(item?.keyNamespace?.key, item?.keyNamespace?.namespace);
             onContentChanged.fire();
         }
     });
-
 
     vscode.commands.registerCommand('simplelocalize.openInWebUi', async (active: SimpleLocalizeTranslationKeyItem) => {
         const item = active || treeView?.selection?.[0];
@@ -358,20 +481,20 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
             return;
         }
         const projectToken = getProjectToken();
-        const namespace = item?.namespace || "";
-        const translationKey = item.translationKey;
+        const namespace = item?.keyNamespace?.namespace || "";
+        const translationKey = item?.keyNamespace?.key;
         const url = `https://simplelocalize.io/dashboard/projects/?hash=${projectToken}&translationKey.condition=EXACT_MATCH&translationKey.text=${translationKey}&translationKey.caseSensitive=true&namespace=${namespace}`;
         vscode.env.openExternal(vscode.Uri.parse(url));
     });;
 
     treeView.onDidExpandElement(event => {
         const element = event.element as SimpleLocalizeTranslationKeyItem;
-        expandedItems.set(element.translationKey, true);
+        expandedItems.set(element?.keyNamespace?.key, true);
     });
 
     treeView.onDidCollapseElement(event => {
         const element = event.element as SimpleLocalizeTranslationKeyItem;
-        expandedItems.set(element.translationKey, false);
+        expandedItems.set(element?.keyNamespace?.key, false);
     });
 
     vscode.commands.registerCommand('simplelocalize.refreshTree', refresh);
@@ -399,19 +522,4 @@ export function registerSidebarTranslations(context: vscode.ExtensionContext) {
 
     refresh();
 
-}
-
-interface SimpleLocalizeTranslationKeyItem extends vscode.TreeItem {
-    translationKey: string;
-    namespace: string;
-    type: string;
-    children?: SimpleLocalizeTranslationItem[];
-}
-
-interface SimpleLocalizeTranslationItem extends vscode.TreeItem {
-    translationKey: string;
-    namespace: string;
-    type: string;
-    languageKey: string;
-    text: string;
 }

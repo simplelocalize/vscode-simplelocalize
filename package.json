@@ -30,9 +30,9 @@
     "formatjs",
     "arb"
   ],
-  "version": "1.0.12",
+  "version": "1.1.0",
   "engines": {
-    "vscode": "^1.94.0"
+    "vscode": "^1.93.1"
   },
   "categories": [
     "Programming Languages",
@@ -67,6 +67,11 @@
           "type": "tree",
           "id": "simplelocalize.projectDetails",
           "name": "Project"
+        },
+        {
+          "type": "tree",
+          "id": "simplelocalize.projectActivity",
+          "name": "Activity"
         },
         {
           "type": "tree",
@@ -140,13 +145,48 @@
           "command": "simplelocalize.openProject",
           "when": "view == simplelocalize.projectDetails",
           "group": "navigation@2"
+        },
+        {
+          "command": "simplelocalize.refreshActivity",
+          "when": "view == simplelocalize.projectActivity",
+          "group": "navigation@1"
+        },
+        {
+          "command": "simplelocalize.openActivity",
+          "when": "view == simplelocalize.projectActivity",
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
         {
+          "command": "simplelocalize.autoTranslate",
+          "when": "view == simplelocalize.projectDetails && viewItem == languages",
+          "group": "inline"
+        },
+        {
+          "command": "simplelocalize.autoTranslate",
+          "when": "view == simplelocalize.projectDetails && viewItem =~ /^language__/",
+          "group": "inline"
+        },
+        {
+          "command": "simplelocalize.publishTranslations",
+          "when": "view == simplelocalize.projectDetails && viewItem == environments",
+          "group": "inline"
+        },
+        {
           "command": "simplelocalize.editEntry",
           "when": "view == simplelocalize.translationsList && (viewItem == simplelocalizeTranslationKey || viewItem == simplelocalizeTranslation)",
           "group": "inline"
+        },
+        {
+          "command": "simplelocalize.openInWebUi",
+          "when": "view == simplelocalize.translationsList && viewItem == simplelocalizeTranslationKey",
+          "group": "inline"
+        },
+        {
+          "command": "simplelocalize.clearTranslation",
+          "when": "view == simplelocalize.translationsList && viewItem == simplelocalizeTranslation",
+          "group": "context@1"
         },
         {
           "command": "simplelocalize.openInWebUi",
@@ -192,9 +232,19 @@
         "icon": "$(clippy)"
       },
       {
+        "command": "simplelocalize.clearTranslation",
+        "title": "Clear translation",
+        "icon": "$(trash)"
+      },
+      {
         "command": "simplelocalize.editEntry",
         "title": "Change translation key",
         "icon": "$(pencil)"
+      },
+      {
+        "command": "simplelocalize.autoTranslate",
+        "title": "Auto-translate all languages",
+        "icon": "$(play)"
       },
       {
         "command": "simplelocalize.changeNamespace",
@@ -237,9 +287,24 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "simplelocalize.refreshActivity",
+        "title": "Refresh activity",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "simplelocalize.openActivity",
+        "title": "Open activity",
+        "icon": "$(home)"
+      },
+      {
         "command": "simplelocalize.openProject",
         "title": "Open project",
         "icon": "$(home)"
+      },
+      {
+        "command": "simplelocalize.publishTranslations",
+        "title": "Publish translations (Latest)",
+        "icon": "$(cloud-upload)"
       },
       {
         "command": "simplelocalize.openResource",
@@ -322,7 +387,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.9",
     "@types/node": "20.x",
-    "@types/vscode": "^1.94.0",
+    "@types/vscode": "^1.93.1",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
     "@typescript-eslint/parser": "^8.7.0",
     "@vscode/test-cli": "^0.0.10",
@@ -331,6 +396,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "luxon": "^3.6.1",
     "axios": "^1.7.7",
     "openapi-typescript": "^7.4.3"
   }
