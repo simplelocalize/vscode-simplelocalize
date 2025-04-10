@@ -25,7 +25,7 @@ These features streamline the localization process, making it easier to manage t
 
 ### Sidebar
 
-Sidebar has 3 sections:
+Sidebar has 4 sections:
 
 #### Translations
 
@@ -36,8 +36,8 @@ https://github.com/user-attachments/assets/d4f9b9d0-9f27-4532-897c-10cf9d721c80
 
 Functions:
 
-- **Delete keys** - select one or more translaion keys and click "cmd + backpace" to delete keys,
-- **Copy translation key** - select one or more translaion keys and click "cmd+c" to copy the key,
+- **Delete keys** - select one or more translation keys and click "cmd + backspace" to delete keys,
+- **Copy translation key** - select one or more translation keys and click "cmd+c" to copy the key,
 - **Translation key context menu** - right click on the translation key to see more options like "Change namespace", "Open in Web UI",
 
 #### Project details
@@ -45,6 +45,10 @@ Functions:
 Project section shows you the basics of your project like number of translation keys, list of languages, namespaces, customers, and [translation hosting](https://simplelocalize.io/translation-hosting/) resources split by environment with option to preview every resource.
 
 https://github.com/user-attachments/assets/63587d63-9116-4b01-9d42-5baae7088d37
+
+#### Recent activity
+
+Recent activity show last 10 activity entries for the configured project, with some basic details like type, is it running, and when the activity occurred.
 
 #### Help and Feedback
 
@@ -71,7 +75,7 @@ https://github.com/user-attachments/assets/d69a9e62-c63f-4f7f-8896-29fce713687e
 
 
 
-- **Update translation with seleected text**
+- **Update translation with selected text**
 
 
 
@@ -86,7 +90,7 @@ https://github.com/user-attachments/assets/523da146-0748-4c1b-9c64-71b50ac1f971
 
 
 
-### Translation keys completition
+### Translation keys competition
 
 Extension suggests translation keys directly in your code. As you type, the extension will provide intelligent suggestions for existing translation keys, making it easier to maintain consistency and avoid typos.
 
@@ -130,7 +134,7 @@ https://github.com/user-attachments/assets/177f6a69-4cce-4ca2-91a4-93276cd2ce89
 
 Integrations doesn't require any additional software to work, however some features like downloading translations, uploading translation,
 and auto-translation requires [SimpleLocalize CLI](https://simplelocalize.io/command-line-tool/) to work. It's recommended
-to have the CLI installed to use the full potential of the extension and simplify the whole process of managing your traslation files and strings.
+to have the CLI installed to use the full potential of the extension and simplify the whole process of managing your translation files and strings.
 
 ## Extension configuration
 
@@ -159,3 +163,9 @@ Users appreciate release notes as you update your extension.
 
 Initial release of SimpleLocalize VSC Extension
 
+### 1.1.X
+
+- Added option to auto-translate project
+- Added option to publish translations
+- Added recent activity
+- Added showing tags and descriptions
